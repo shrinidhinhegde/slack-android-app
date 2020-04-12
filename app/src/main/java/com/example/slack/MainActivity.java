@@ -1,10 +1,17 @@
 package com.example.slack;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
@@ -21,64 +28,35 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText message;
-    private Button send;
-    private String text;
+    private TextView text;
+    private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        message=findViewById(R.id.message);
-        send=findViewById(R.id.send);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                text = message.getText().toString();
-                if(text.length()>0){
-                    message.setText("");
-                    try {
-                        send(text);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else{
-                    Toast.makeText(MainActivity.this, "Enter a Valid Message!", Toast.LENGTH_SHORT).show();
-                }
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECEIVE_SMS)){
+                //do nothing
             }
-        });
+            else{
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECEIVE_SMS}, MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
+            }
+        }
+        text = findViewById(R.id.text);
     }
 
-    public void send(String data) throws IOException{
-
-        OkHttpClient client = new OkHttpClient();
-
-        JsonObject json = new JsonObject();
-        json.addProperty("text", data);
-        json.addProperty("username","incoming-webhook");
-        json.addProperty("icon_emoji", ":smiley:");
-
-        Request request = new Request.Builder()
-                .url("https://hooks.slack.com/services/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")
-                .post(RequestBody.create(MediaType.parse("application/javascript; charset=utf-8"), json.toString()))
-                .build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case MY_PERMISSIONS_REQUEST_RECEIVE_SMS:{
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                    text.setVisibility(View.VISIBLE);
+                }
+                else{
+                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                }
             }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "Your Message has been sent!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
+        }
     }
 }
