@@ -32,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        text.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case MY_PERMISSIONS_REQUEST_RECEIVE_SMS:{
