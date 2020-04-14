@@ -1,0 +1,15 @@
+{
+    "android": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-slack-android-100201-authRole",
+            "UnauthRoleArn": "arn:aws:iam::444770160471:role/amplify-slack-android-100201-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::444770160471:role/amplify-slack-android-100201-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-slack-android-100201-deployment",
+            "UnauthRoleName": "amplify-slack-android-100201-unauthRole",
+            "StackName": "amplify-slack-android-100201",
+            "StackId": "arn:aws:cloudformation:us-east-1:444770160471:stack/amplify-slack-android-100201/ed5ee9c0-7e08-11ea-a76b-0ed5356bca17",
+            "AmplifyAppId": "d2j5znl92pmv5s"
+        }
+    }
+}
